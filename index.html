@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Directorate // Xenobiology Archive</title>
+<style>
+:root{--ink:#d8f8ee;--dim:#7aa99c;--acid:#77ffca;--amber:#ffc76a;--red:#ff5571;--panel:rgba(8,21,24,.86);--line:rgba(119,255,202,.18)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#03090b;color:var(--ink);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}body{overflow-x:hidden}body.locked{overflow:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 75% 15%,rgba(46,151,128,.13),transparent 32%),linear-gradient(rgba(100,255,220,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(100,255,220,.025) 1px,transparent 1px);background-size:auto,36px 36px,36px 36px}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:20;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(0,0,0,.08) 4px);mix-blend-mode:multiply}
+button,input,textarea,select{font:inherit}.hidden{display:none!important}.screen{min-height:100vh}.mono-label{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+#boot{display:grid;place-items:center;position:fixed;inset:0;background:#03090b;z-index:50;transition:.7s opacity}.bootbox{width:min(560px,84vw)}.sigil{width:74px;height:74px;margin-bottom:25px;filter:drop-shadow(0 0 16px rgba(119,255,202,.35))}.bootline{height:2px;background:#112629;overflow:hidden;margin:18px 0}.bootline i{display:block;height:100%;width:0;background:var(--acid);box-shadow:0 0 12px var(--acid);animation:load 2.1s ease forwards}.boottext{font-size:11px;letter-spacing:.15em;color:var(--dim);min-height:16px}@keyframes load{to{width:100%}}
+#gate{display:grid;grid-template-columns:minmax(300px,1.1fr) minmax(320px,.9fr);height:100vh;overflow-y:auto}.gate-art{padding:clamp(34px,7vw,100px);display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--line);position:relative;overflow:hidden}.gate-art:after{content:"XE-09";position:absolute;right:-35px;bottom:70px;writing-mode:vertical-rl;font-size:130px;font-weight:900;color:rgba(119,255,202,.025);letter-spacing:.05em}.brand{display:flex;align-items:center;gap:14px}.brandmark{width:38px;height:38px}.brand b{display:block;letter-spacing:.16em}.brand small{color:var(--dim)}.headline{max-width:670px}.headline h1{font:700 clamp(42px,7vw,90px)/.88 system-ui,sans-serif;text-transform:uppercase;letter-spacing:-.07em;margin:0 0 30px}.headline h1 span{color:transparent;-webkit-text-stroke:1px var(--acid)}.headline h1 .known-invert{display:inline-block;color:#031014;-webkit-text-stroke:0;background:linear-gradient(135deg,#9fffe8,#74bfff);padding:0 .07em .05em;margin-left:.02em;box-shadow:0 0 22px rgba(83,168,255,.22);clip-path:polygon(2% 0,100% 3%,98% 100%,0 96%)}.headline p{max-width:540px;color:var(--dim);line-height:1.8;font-size:13px}.status-strip{display:flex;gap:26px;flex-wrap:wrap}.stat b{display:block;color:var(--acid);font-size:12px;margin-top:6px}
+.gate-panel{display:grid;place-items:center;padding:35px}.auth{width:min(720px,100%)}.auth h2{font:600 28px system-ui;margin:12px 0 8px}.auth>p{color:var(--dim);font-size:12px;line-height:1.65;margin-bottom:28px}.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}.agent-picker{grid-column:1/-1;display:grid;grid-template-columns:46px 1fr 46px;gap:8px;align-items:stretch}.agent-picker .role{width:100%}.agent-picker .role svg{transition:transform .28s ease,filter .28s ease,color .28s ease}.agent-picker .role:hover svg{transform:scale(1.45);color:#a8ffea;filter:drop-shadow(0 0 10px rgba(119,255,202,.7))}.agent-arrow{border:1px solid var(--line);background:#061013;color:var(--acid);cursor:pointer;font-size:20px}.agent-arrow:hover{border-color:var(--acid);box-shadow:0 0 16px rgba(119,255,202,.12)}.role{background:rgba(5,15,17,.8);color:var(--dim);border:1px solid var(--line);padding:18px 10px;cursor:pointer;transition:.25s}.role:hover,.role.active{border-color:var(--acid);color:var(--ink);box-shadow:inset 0 0 25px rgba(119,255,202,.04)}.role[data-role="hx"]{color:#77ffca}.role[data-role="hx"].active{border-color:#77ffca;box-shadow:inset 0 0 28px rgba(119,255,202,.1),0 0 15px rgba(119,255,202,.08)}.role[data-role="specops"]{color:#ff9d4d}.role[data-role="specops"]:hover,.role[data-role="specops"].active{border-color:#ff9d4d;color:#ffc078;box-shadow:inset 0 0 30px rgba(255,130,35,.12)}.role[data-role="director"]{color:#ff5571}.role[data-role="director"]:hover,.role[data-role="director"].active{border-color:#ff5571;color:#ff8094;box-shadow:inset 0 0 28px rgba(255,85,113,.1),0 0 15px rgba(255,85,113,.08)}#roleName.hx-clearance{color:#77ffca}#roleName.specops-clearance{color:#ff9d4d}#roleName.director-clearance{color:#ff5571;text-shadow:0 0 12px rgba(255,85,113,.35)}.role svg{height:44px;display:block;margin:0 auto 12px;transition:transform .28s ease,filter .28s ease,color .28s ease}.role:hover svg{transform:scale(1.4)}.role[data-role="hx"]:hover svg{color:#9effdd;filter:drop-shadow(0 0 11px rgba(119,255,202,.75))}.role[data-role="specops"]:hover svg{color:#ffb25f;filter:drop-shadow(0 0 13px rgba(255,130,50,.8))}.role[data-role="director"]:hover svg{color:#ff7188;filter:drop-shadow(0 0 11px rgba(255,85,113,.75))}.role strong{display:block;font-size:12px;letter-spacing:.1em}.role small{font-size:9px}.field{margin-top:22px}.field label{display:block;margin-bottom:8px}.codewrap{display:flex;border:1px solid var(--line);background:#061013}.codewrap:focus-within{border-color:var(--acid);box-shadow:0 0 20px rgba(119,255,202,.08)}.codewrap input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--acid);padding:16px;letter-spacing:.24em}.codewrap button{width:53px;border:0;border-left:1px solid var(--line);background:transparent;color:var(--acid);cursor:pointer}.error{height:28px;color:var(--red);padding-top:9px;font-size:10px;letter-spacing:.08em}
+#app{min-height:100vh;display:grid;grid-template-columns:250px 1fr}.side{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:25px 18px;background:rgba(3,10,12,.92);display:flex;flex-direction:column}.side .brand{margin:0 7px 36px}.clearance{border:1px solid var(--line);padding:12px;margin-bottom:25px}.clearance b{color:var(--acid);font-size:12px}.nav button[data-view="all"]{color:#77ffca}.nav button[data-view="dossier"]{color:#ff8c68}.nav button[data-view="lyoes"]{color:#d88cff!important}.nav button[data-view="research"]{color:#69bfff!important}.nav button[data-view="lore"]{color:#ffc76a}.nav button[data-view="directive"]{color:#72e6a0}.nav button[data-view="agent"]{color:#6fe7ff}.nav button{position:relative;display:flex;align-items:center;min-height:42px}.sub-dot{display:block;margin-left:auto;flex:0 0 8px;width:8px;height:8px;border:1px solid currentColor;border-radius:50%;box-shadow:0 0 7px currentColor;align-self:center}.nav button[data-view="agentstats"],.nav button[data-view="lyoestats"],.nav button[data-view="zombiestats"]{padding-left:30px;font-size:10px}.nav button[data-view="agentstats"]{color:#a7f4ff;border-left-color:#6fe7ff}.nav button[data-view="lyoestats"]{color:#e5b4ff!important;border-left-color:#d88cff}.nav button[data-view="zombiestats"]{color:#ffb096;border-left-color:#ff8c68}.nav button[data-view="stats"]:not(.hidden){animation:subopen .3s ease}@keyframes subopen{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}.nav button[data-view="overseer"]{color:#ff5571!important}.nav button.active{color:var(--ink)!important}.card.type-dossier:before{background:#ff8c68}.card.type-lyoes:before{background:#d88cff}.card.type-research:before{background:#69bfff}.card.type-lore:before{background:#ffc76a}.card.type-directive:before{background:#72e6a0}.card.type-agent:before{background:#6fe7ff}.card.type-specops:before{background:#ff9d4d}.card.type-agentstats:before{background:#a7f4ff}.card.type-lyoestats:before{background:#d88cff}.card.type-zombiestats:before{background:#ff8c68}.card.type-overseer:before{background:#ff5571}.card.type-lyoes .tag{color:#d88cff}.card.type-research .tag{color:#69bfff}.card.type-dossier .tag{color:#ff8c68}.card.type-lore .tag{color:#ffc76a}.card.type-directive .tag{color:#72e6a0}.card.type-agent .tag{color:#6fe7ff}.card.type-specops .tag{color:#ff9d4d}.card.type-agentstats .tag{color:#a7f4ff}.card.type-lyoestats .tag{color:#d88cff}.card.type-zombiestats .tag{color:#ff8c68}.card.type-overseer .tag{color:#ff5571}.nav button{width:100%;text-align:left;padding:13px;border:0;border-left:2px solid transparent;background:transparent;color:var(--dim);cursor:pointer}.nav button:hover,.nav button.active{color:var(--ink);border-color:var(--acid);background:linear-gradient(90deg,rgba(119,255,202,.08),transparent)}.logout{margin-top:auto;background:transparent;border:1px solid var(--line);color:var(--dim);padding:11px;cursor:pointer}.main{padding:36px clamp(24px,5vw,72px);max-width:1500px;width:100%;margin:auto}.top{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:18px}.systembar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:30px}.syschip{border:1px solid var(--line);background:rgba(6,16,19,.8);padding:8px 11px;color:var(--dim);font-size:9px;letter-spacing:.08em}.syschip b{color:var(--acid)}.syschip.alert b{color:var(--red)}.signal-scan{margin-left:auto;border:1px solid var(--line);background:transparent;color:var(--acid);padding:8px 12px;cursor:pointer}.signal-scan:hover{border-color:var(--acid);box-shadow:0 0 18px rgba(119,255,202,.12)}.data-ticker{position:relative;overflow:hidden;border:1px solid var(--line);height:28px;margin-bottom:10px;background:#050e10}.data-ticker span{position:absolute;white-space:nowrap;color:#537c71;font-size:9px;letter-spacing:.14em;line-height:26px;animation:ticker 24s linear infinite}@keyframes ticker{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}.threat-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}.threat-filters button{border:1px solid var(--line);background:transparent;color:var(--dim);padding:6px 9px;font-size:9px;cursor:pointer}.threat-filters button:hover,.threat-filters button.active{border-color:var(--acid);color:var(--acid);background:rgba(119,255,202,.06)}.threat-filters button[data-threat="5"]{color:#ff5571}.threat-filters button[data-threat="5"].active{border-color:#ff5571;background:rgba(255,85,113,.08)}.command-launch{position:fixed;left:275px;bottom:28px;z-index:12;border:1px solid var(--line);background:#061315;color:var(--acid);padding:12px 15px;cursor:pointer;box-shadow:0 0 25px rgba(0,0,0,.5)}.command-launch:hover{border-color:var(--acid)}.command-box{width:min(760px,94vw);border:1px solid var(--acid);background:rgba(2,10,12,.98);padding:22px;box-shadow:0 0 80px rgba(119,255,202,.12)}.terminal-output{height:260px;overflow:auto;border:1px solid var(--line);padding:14px;color:#75a99b;font-size:10px;line-height:1.8;white-space:pre-wrap;margin:14px 0;background:#020708}.terminal-input{display:flex;border:1px solid var(--line)}.terminal-input span{padding:12px;color:var(--acid)}.terminal-input input{flex:1;background:transparent;border:0;color:var(--ink);outline:0;padding:12px}.scan-flash{animation:scanflash .7s ease}@keyframes scanflash{50%{box-shadow:inset 0 0 100px rgba(119,255,202,.12)}}.pulse-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acid);margin-right:7px;box-shadow:0 0 8px var(--acid);animation:pulse 1.4s infinite}@keyframes pulse{50%{opacity:.25;transform:scale(.7)}}.lyoe-channel{color:#d88cff!important}.lyoe-channel.active{border-color:#d88cff!important;background:linear-gradient(90deg,rgba(216,140,255,.1),transparent)!important}.research-channel{color:#69bfff!important}.research-channel.active{border-color:#69bfff!important;background:linear-gradient(90deg,rgba(105,191,255,.1),transparent)!important}.specops-channel{color:#ff9d4d!important}.specops-channel.active{border-color:#ff9d4d!important;background:linear-gradient(90deg,rgba(255,130,50,.12),transparent)!important}.director-channel{color:var(--red)!important}.director-channel.active{border-color:var(--red)!important;background:linear-gradient(90deg,rgba(255,85,113,.09),transparent)!important}.top h2{font:600 clamp(24px,4vw,42px) system-ui;margin:5px 0}.search{border:1px solid var(--line);background:#061013;color:var(--ink);padding:12px;width:min(300px,36vw);outline:0}.search:focus{border-color:var(--acid)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.card{grid-column:span 4;border:1px solid var(--line);background:var(--panel);padding:20px;position:relative;overflow:hidden;min-height:200px;transition:.25s}.card:hover{transform:translateY(-2px);border-color:rgba(119,255,202,.45)}.card{cursor:pointer}.inspect-hint{margin-top:18px;color:var(--acid)!important;font-size:9px!important;letter-spacing:.12em}.card:before{content:"";position:absolute;left:0;top:0;width:24px;height:2px;background:var(--acid)}.card.wide{grid-column:span 8}.card.threat-critical{grid-column:span 8;min-height:290px;border-color:rgba(255,85,113,.48)}.card.threat-high{grid-column:span 6;min-height:245px;border-color:rgba(255,199,106,.38)}.card.threat-medium{grid-column:span 4;min-height:215px}.card.threat-low{grid-column:span 3;min-height:185px;opacity:.9}.card.threat-critical:before{width:42%;background:var(--red)}.card.threat-high:before{width:25%;background:var(--amber)}.agent-symbol{position:absolute;right:18px;bottom:42px;width:58px;height:58px;color:var(--acid);opacity:.58;transition:transform .28s ease,opacity .28s ease,filter .28s ease;transform-origin:center}.card:hover .agent-symbol{transform:scale(1.55);opacity:1;filter:drop-shadow(0 0 12px rgba(119,255,202,.55))}.agent-symbol svg{width:100%;height:100%}.card .tag{display:inline-block;border:1px solid var(--line);color:var(--acid);padding:4px 7px;font-size:9px;letter-spacing:.14em;margin-bottom:24px}.card h3{font:600 19px system-ui;margin:0 0 10px}.card p{color:var(--dim);font-size:11px;line-height:1.7}.meta{position:absolute;bottom:16px;left:20px;right:20px;display:flex;justify-content:space-between;color:#55736b;font-size:9px}.record-actions{position:absolute;right:12px;top:12px;display:flex;gap:6px}.record-actions button{border:1px solid var(--line);background:#071315;color:var(--dim);font-size:9px;padding:6px 8px;cursor:pointer}.record-actions button:hover{border-color:var(--acid);color:var(--acid)}.record-actions .danger:hover{border-color:var(--red);color:var(--red)}.threat{color:var(--amber)!important}.redacted{background:#101718;color:#101718;border-radius:1px;user-select:none}.empty{grid-column:1/-1;border:1px dashed var(--line);padding:60px;text-align:center;color:var(--dim)}.fab{position:fixed;right:34px;bottom:30px;border:1px solid var(--acid);background:#092019;color:var(--acid);padding:14px 18px;cursor:pointer;box-shadow:0 0 25px rgba(119,255,202,.15)}
+.modal{position:fixed;inset:0;z-index:30;background:rgba(0,4,5,.82);display:grid;place-items:center;padding:20px}.modalbox{width:min(650px,100%);border:1px solid var(--line);background:#071113;padding:28px;box-shadow:0 30px 100px #000}.modalbox h3{font:600 24px system-ui;margin:5px 0 24px}#detailModal .modalbox{width:min(1000px,94vw);min-height:min(760px,86vh);max-height:92vh;overflow-y:auto;padding:clamp(28px,4vw,52px)}#detailModal .modalbox h3{font-size:clamp(22px,3vw,32px);margin-bottom:18px}#detailModal .modalbox p{font-size:11px!important;line-height:1.9!important;max-width:860px}#detailModal .mono-label{font-size:9px}.formrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}.modal input,.modal textarea,.modal select{width:100%;background:#030a0c;color:var(--ink);border:1px solid var(--line);padding:12px;outline:0;margin-bottom:12px}.modal textarea{min-height:130px;resize:vertical}.actions{display:flex;justify-content:flex-end;gap:10px}.actions button{padding:10px 16px;border:1px solid var(--line);background:transparent;color:var(--dim);cursor:pointer}.actions .primary{border-color:var(--acid);color:var(--acid)}
+@media(max-width:850px){.roles{grid-template-columns:1fr}.agent-picker{grid-column:1}#gate{grid-template-columns:1fr}.gate-art{min-height:45vh;border-right:0;border-bottom:1px solid var(--line)}.headline h1{margin-top:70px}.status-strip{display:none}#app{grid-template-columns:1fr}.side{position:relative;height:auto;padding:16px}.side .brand{margin-bottom:15px}.clearance{display:none}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap}.logout{position:absolute;right:16px;top:17px}.command-launch{left:18px;bottom:18px}.card,.card.wide,.card.threat-critical,.card.threat-high,.card.threat-medium,.card.threat-low{grid-column:span 12}.top{align-items:flex-end}.main{padding-top:25px}}
+
+</style>
+</head>
+<body class="locked">
+<div id="boot"><div class="bootbox">
+<svg class="sigil" viewBox="0 0 100 100" fill="none" stroke="#77ffca"><circle cx="50" cy="50" r="42"/><path d="M50 8v84M8 50h84M20 20l60 60M80 20L20 80" opacity=".25"/><path d="M50 21l25 15v28L50 79 25 64V36z" stroke-width="2"/><circle cx="50" cy="50" r="6" fill="#77ffca"/></svg>
+<div class="mono-label">Directorate deep-space relay</div><div class="bootline"><i></i></div><div class="boottext" id="boottext">ESTABLISHING QUANTUM HANDSHAKE...</div></div></div>
+<section id="gate" class="screen hidden"><div class="gate-art">
+<div class="brand"><svg class="brandmark" viewBox="0 0 40 40" fill="none" stroke="#77ffca"><path d="M20 2l17 10v16L20 38 3 28V12z"/><circle cx="20" cy="20" r="4" fill="#77ffca"/><path d="M3 20h34M20 2v36" opacity=".25"/></svg><div><b>AEGIS DIRECTORATE</b><small>Xenobiology Records Division</small></div></div>
+<div class="headline"><div class="mono-label">Black archive // terminal 09</div><h1>Know the<br><span>un<span class="known-invert">known</span>.</span></h1><p>Restricted intelligence concerning non-terrestrial organisms, anomalous ecologies, field operations, and contact events. Unauthorized observation will be treated as contamination.</p></div>
+<div class="status-strip"><div class="stat"><span class="mono-label">Archive state</span><b>ONLINE</b></div><div class="stat"><span class="mono-label">Relay lag</span><b>08.41 MS</b></div><div class="stat"><span class="mono-label">Containment</span><b>STABLE</b></div></div>
+</div><div class="gate-panel"><div class="auth"><div class="mono-label">Identity challenge</div><h2>Select clearance class.</h2><p>Choose an authorized identity profile and provide its active cipher. All access events are recorded.</p>
+<div class="roles"><div class="agent-picker"><button class="agent-arrow" id="agentPrev" aria-label="Previous Agent">←</button><button class="role active" data-role="agent">
+<svg id="agentChoiceIcon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2"><circle cx="32" cy="32" r="19"/><circle cx="32" cy="32" r="7"/><path d="M32 4v17M32 43v17M4 32h17M43 32h17"/></svg><strong id="agentChoice">AGENT VESPER</strong><small>INDIVIDUAL CIPHER</small></button><button class="agent-arrow" id="agentNext" aria-label="Next Agent">→</button></div>
+<button class="role" data-role="hx"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><circle cx="23" cy="24" r="17" stroke-width="3"/><path d="M38 35l20 20M48 45l-7 7M53 50l-7 7" stroke-width="3"/><path d="M12 24c6-8 16-8 22 0-6 8-16 8-22 0z"/><circle cx="23" cy="24" r="4" fill="currentColor"/></svg><strong>HEAD XENOBIOLOGIST</strong><small>OMEGA CLEARANCE</small></button>
+<button class="role" data-role="specops"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><path d="M32 4l8 15 17 3-12 12 3 18-16-8-16 8 3-18L7 22l17-3z"/><circle cx="32" cy="33" r="6"/></svg><strong>SPECIAL OPS</strong><small>OBSIDIAN COMMAND</small></button>
+<button class="role" data-role="director"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor"><path d="M32 3l8 11 14 1-5 13 7 12-12 7-3 14H23l-3-14-12-7 7-12-5-13 14-1z" stroke-width="2"/><circle cx="32" cy="32" r="10"/><path d="M32 22v20M22 32h20"/></svg><strong>OVERSEER</strong><small>ONYX PRIME</small></button></div>
+<div class="field"><label class="mono-label" for="code">Encrypted access cipher</label><div class="codewrap"><input id="code" type="password" autocomplete="off" placeholder="••••••••••"><button id="enter" aria-label="Authenticate">↳</button></div><div class="error" id="error"></div></div>
+</div></div></section>
+<section id="app" class="hidden"><aside class="side"><div class="brand"><svg class="brandmark" viewBox="0 0 40 40" fill="none" stroke="#77ffca"><path d="M20 2l17 10v16L20 38 3 28V12z"/><circle cx="20" cy="20" r="4" fill="#77ffca"/></svg><div><b>AEGIS</b><small>BLACK ARCHIVE</small></div></div><div class="clearance"><span class="mono-label">Active clearance</span><br><b id="roleName">AGENT // L2</b></div><nav class="nav"><button class="active" data-view="all">▰ &nbsp; ALL RECORDS</button><button id="zombieFilesNav" data-view="dossier">⌁ &nbsp; ZOMBIE DOSSIERS <span class="sub-dot" title="Has sub-channel"></span></button><button class="stats-channel hidden" id="zombieStatsChannel" data-view="zombiestats">└─ ZOMBIE STATS</button><button class="lyoe-channel" id="lyoeFilesNav" data-view="lyoes">⟁ &nbsp; LYOES CHANNEL <span class="sub-dot" title="Has sub-channel"></span></button><button class="stats-channel hidden" id="lyoeStatsChannel" data-view="lyoestats">└─ LYOE STATS</button><button class="research-channel" data-view="research">⚗ &nbsp; XENO RESEARCH</button><button data-view="lore">◈ &nbsp; LORE ARCHIVE</button><button data-view="directive">△ &nbsp; DIRECTIVES</button><button id="agentFilesNav" data-view="agent">◉ &nbsp; AGENT FILES <span class="sub-dot" title="Has sub-channel"></span></button><button class="stats-channel hidden" id="agentStatsChannel" data-view="agentstats">└─ PERSONNEL STATS</button><button class="specops-channel hidden" id="specopsChannel" data-view="specops">✦ &nbsp; SPECIAL OPS</button><button class="director-channel hidden" id="directorChannel" data-view="overseer">◆ &nbsp; ONYX CHANNEL</button></nav><button class="logout" id="logout">DISCONNECT</button></aside>
+<main class="main"><header class="top"><div><div class="mono-label" id="eyebrow">Archive index // all sectors</div><h2 id="viewTitle">Recovered intelligence</h2></div><input class="search" id="search" placeholder="SEARCH ARCHIVE..."></header><div class="data-ticker"><span>AEGIS RELAY // ASOA-203 // BLACKLIGHT HYPOTHERMIA // RADIATION FRONT MOVING NORTH // LYOE ACTIVITY ELEVATED // OSPREY WINDOW: UNCONFIRMED // </span></div><div class="threat-filters"><button class="active" data-threat="0">ALL SIGNALS</button><button data-threat="5">ONYX-5</button><button data-threat="4">ONYX-4</button><button data-threat="3">ONYX-3</button><button data-threat="2">ONYX-2</button><button data-threat="1">LOW / PERSONNEL</button></div><div class="systembar"><div class="syschip"><span class="pulse-dot"></span><b>RELAY LIVE</b></div><div class="syschip">LOCAL TIME <b id="liveClock">--:--:--</b></div><div class="syschip">VISIBLE FILES <b id="fileCount">00</b></div><div class="syschip alert">STORM INDEX <b id="stormIndex">87.4</b></div><button class="signal-scan" id="signalScan">SCAN SIGNALS</button></div><div class="grid" id="records"></div><button class="fab hidden" id="newRecord">＋ NEW RECORD</button></main></section>
+<div class="modal hidden" id="modal"><div class="modalbox"><div class="mono-label">Head Xenobiologist authoring interface</div><h3 id="modalTitle">Commit archive record</h3><div class="formrow"><input id="fTitle" placeholder="Record title"><select id="fType"><option value="dossier">ZOMBIE DOSSIER</option><option value="lyoes">LYOES CHANNEL</option><option value="research">XENOBIOLOGY EXPERIMENT / STUDY</option><option value="lore">LORE ARCHIVE</option><option value="directive">DIRECTIVE</option><option value="agent">AGENT FILE</option><option value="agentstats">PERSONNEL STATS</option><option value="lyoestats">LYOE GAMEPLAY STATS</option><option value="zombiestats">ZOMBIE GAMEPLAY STATS</option><option value="specops" id="specopsOption">SPECIAL OPS CHANNEL</option><option value="overseer" id="overseerOption">ONYX CHANNEL</option></select></div><div class="formrow"><input id="fTag" placeholder="Classification / tag"><input id="fThreat" placeholder="Status / threat level"></div><textarea id="fSummary" placeholder="Short card summary..."></textarea><textarea id="fBody" placeholder="Full Agent-visible record contents..."></textarea><textarea id="fHx" placeholder="HX-only annotation (redacted for Agents)"></textarea><div class="actions"><button class="danger hidden" id="deleteRecord">DELETE RECORD</button><button id="cancel">CANCEL</button><button class="primary" id="save">ENCRYPT + COMMIT</button></div></div></div>
+<button class="command-launch hidden" id="commandLaunch">⌘ COMMAND UPLINK</button><div class="modal hidden" id="commandModal"><div class="command-box"><div class="mono-label">AEGIS command uplink // interactive terminal</div><div class="terminal-output" id="terminalOutput">DIRECTORATE TERMINAL READY.
+Type HELP to view authorised commands.</div><div class="terminal-input"><span>&gt;</span><input id="terminalCommand" autocomplete="off" placeholder="ENTER COMMAND..."></div><div class="actions" style="margin-top:12px"><button id="closeCommand">CLOSE UPLINK</button></div></div></div><div class="modal hidden" id="detailModal"><div class="modalbox"><div class="mono-label" id="dTag">ARCHIVE RECORD</div><h3 id="dTitle">Record title</h3><p id="dSummary" style="color:var(--acid);line-height:1.7"></p><div style="height:1px;background:var(--line);margin:20px 0"></div><p id="dBody" style="color:var(--dim);line-height:1.8;white-space:pre-wrap"></p><div id="dHxWrap"><div class="mono-label" style="margin-top:24px">Head Xenobiologist annotation // omega clearance</div><p id="dHx" style="color:var(--amber);line-height:1.7;white-space:pre-wrap"></p></div><div class="actions" style="margin-top:28px"><button id="closeDetail">CLOSE RECORD</button><button class="primary hidden" id="editFromDetail">EDIT RECORD</button></div></div></div>
+<script>
+const ACCESS={hx:{'HX-OMEGA-9':'HX NORO CASTELLUN'},specops:{'--- .--. ...':'SPECIAL OPS // OBSIDIAN'},director:{'ONYX-PRIME-0':'OVERSEER // PRIME'}};
+const AGENTS=[{name:'AGENT VESPER',code:'VESPER-91'},{name:'AGENT RAZOR',code:'RAZOR-VX8'},{name:'AGENT SOLACE',code:'SOLACE-S6'},{name:'AGENT FORGE',code:'FORGE-HX4'},{name:'AGENT ECHO',code:'ECHO-NULL5'},{name:'AGENT BULWARK',code:'BULWARK-A40'}];
+const AGENT_LOGIN_ICONS=[
+'<circle cx="32" cy="32" r="19"/><circle cx="32" cy="32" r="7"/><path d="M32 4v17M32 43v17M4 32h17M43 32h17"/>',
+'<path d="M17 55L44 8l4 8-21 42z"/><path d="M12 43l22 13M38 13l10 6"/><path d="M19 48l-7 8"/>',
+'<path d="M25 7h14v18h18v14H39v18H25V39H7V25h18z"/><circle cx="32" cy="32" r="7"/>',
+'<path d="M13 54l25-25M35 10l19 19-9 5-15-15z"/><path d="M10 43l11 11M8 57l-2-2 10-15 8 8z"/>',
+'<path d="M6 32s10-17 26-17 26 17 26 17-10 17-26 17S6 32 6 32z"/><circle cx="32" cy="32" r="8"/><path d="M10 54L54 10" stroke-width="4"/>',
+'<path d="M32 5l22 10v17c0 14-9 22-22 27C19 54 10 46 10 32V15z"/><path d="M19 32h26M32 19v26"/>'
+];
+const defaults=[
+{id:200,pinned:true,type:'directive',tag:'AGENT INTRODUCTION // OPERATION',title:'OPERATION: BLACKLIGHT HYPOTHERMIA',summary:'Mandatory mission briefing for all Agents deployed to ASOA-203.',body:`HOME PLANET: ASOA-203
+
+[[OPERATION: BLACKLIGHT HYPOTHERMIA]]
+[[Initiated by Head Xenobiologist (HX) Noro Castellun.]]
+
+[THREAT: ONYX-2]
+[Time: 9 PM EST.]
+
+“You cannot wish for life.”
+“You cannot wish for death.”
+“If God exists, he already turned his back on us.”
+
+[MISSION ASSIGNMENT]
+
+• Exterminate any and all zombified humanoids located in the “Radiation Storm” of [CLASSIFIED].
+• Examine and check for any living beings inside.
+• Find the virus that led to everything happening: NTO-312, Generation IX.
+
+[[MISC]]
+
+The Radiation Storm is far too powerful for an Osprey to remain within the retrieval zone. Aircraft may only insert and extract Agents before returning with cargo.
+
+Cargo Ospreys are now operational. Modern Ospreys use advanced space-navigation technology in place of conventional rockets.
+
+STANDARD AGENT EQUIPMENT
+• 1 respirator
+• 3 packed MREs
+• 3 Aquabottles™
+
+KNOWN CONTAMINANTS
+• Toxic Infection — contracted from the storm.
+• Radiation Infection — contracted from zombified humanoids.
+
+AGENTS: [CLASSIFIED]
+
+TO BE CONTINUED.`,date:'21:00 EST',threat:'THREAT: ONYX-2',hx:'Insertion coordinates, Agent identities, and the actual extraction window remain sealed under HX authority.'},
+{id:201,type:'lyoes',tag:'DEMONIC // PRAYER',title:'Prayer — Pouncing Lyoe',summary:'An ambush demonic that pounces from ceilings, towers, and dead trees.',body:`“Lyoes” is the field nickname assigned to demonic organisms recovered on ASOA-203. Prayers possess elongated limbs, inverted joints, and a jaw that opens along the sternum. They remain perfectly still above travel routes before launching onto the nearest living target. Prayers frequently whisper fragments of their victim’s memories before striking.
+
+BEHAVIOUR
+A Prayer selects the most isolated member of a formation and tracks eye movement before attacking. It can cross approximately thirty metres in one leap and alter direction by striking nearby walls with its forelimbs. Packs position themselves along likely escape routes rather than attacking simultaneously.
+
+FIELD IDENTIFICATION
+Listen for reversed breathing, falling dust, and quiet speech from above. Their skin reflects almost no visible light but appears as a cold violet outline through ultraviolet optics.
+
+ENGAGEMENT PROTOCOL
+Maintain overlapping elevated sight lines. Never pursue a retreating Prayer beneath structural cover. Sonic charges interrupt a leap, while concentrated fire to the pelvis prevents a second pounce.`,date:'GEN IX',threat:'THREAT: ONYX-5',hx:'Never look directly into the cavity beneath the facial plate. Three HX observers suffered simultaneous cardiac arrest.'},
+{id:202,type:'lyoes',tag:'DEMONIC // THRONE',title:'Throne — Command Lyoe',summary:'A stationary demonic mass capable of directing entire hordes without sound.',body:`A Throne forms when multiple infected humanoids fuse around a living Lyoe core. It anchors itself beneath structures and directs nearby zombies through an unknown extrasensory signal. Hordes within its radius demonstrate military coordination, staged retreats, and deliberate ambushes.
+
+BEHAVIOUR
+The organism avoids direct contact and grows inside basements, transit tunnels, or buried facilities. Root-like nerves spread through walls for hundreds of metres. Every connected corpse functions as a sensory organ, allowing the Throne to observe an entire district at once.
+
+FIELD IDENTIFICATION
+Symptoms include synchronized zombie movement, repeating radio pulses, warm walls, and human voices emerging from ventilation systems.
+
+ENGAGEMENT PROTOCOL
+Destroy external nerve clusters before approaching the core. If the Throne detects the assault team, it will collapse routes, sacrifice infected as barriers, and direct high-level Lyoes toward the breach.`,date:'GEN IX',threat:'THREAT: ONYX-5',hx:'The core is not controlling the horde. Evidence suggests it is receiving commands from beneath the Radiation Storm.'},
+{id:203,type:'lyoes',tag:'DEMONIC // CANTOR',title:'Cantor — Signal Lyoe',summary:'Its song disables respirators and compels exposed humans to approach it.',body:`Cantors appear as tall, emaciated humanoids surrounded by vibrating black filaments. Their vocalisation interferes with electronics, ruptures protective seals, and produces compulsive obedience in unprotected listeners. Audio must never be recorded or retransmitted.
+
+BEHAVIOUR
+Cantors rarely attack physically. They walk toward populated shelters and begin a low-frequency hymn that strengthens over time. Infected become passive around them while living subjects experience memory loss, nosebleeds, and an overwhelming need to move closer.
+
+FIELD IDENTIFICATION
+Nearby displays produce circular distortion and comms repeat words that were never transmitted. Water vibrates before the Cantor becomes visible.
+
+ENGAGEMENT PROTOCOL
+Switch to insulated hand signals and disable open microphones. Engage from beyond the filament radius. If a squad member begins repeating the hymn, sever helmet audio and restrain them immediately.`,date:'GEN VIII',threat:'THREAT: ONYX-4',hx:'Cantor harmonics contain a repeating stellar coordinate. The destination is not ASOA-203.'},
+{id:204,type:'lyoes',tag:'DEMONIC // WARDEN',title:'Warden — Armoured Lyoe',summary:'A heavily plated demonic bred to defend nests and experimental sites.',body:`Wardens stand approximately three metres tall and develop overlapping mineral plates from absorbed radioactive debris. They are slow until threatened, after which they charge with enough force to breach an Osprey cargo door. The exposed tissue behind the left knee is the only confirmed ballistic weakness.
+
+BEHAVIOUR
+A Warden patrols a fixed perimeter around Lyoe nests, experimental chambers, or Throne roots. It tests walls and doors for weakness, then memorises the strongest route of attack. When wounded, it tears radioactive plating from its body and throws the fragments as shrapnel.
+
+FIELD IDENTIFICATION
+Heavy four-step movement pattern, magnetic interference, and deep scoring on reinforced surfaces. Geiger readings rise sharply even behind sealed cover.
+
+ENGAGEMENT PROTOCOL
+Split the squad and force repeated turns. Attack the rear knee when the Warden commits to a charge. Never use an Osprey hull as cover; the organism recognises aircraft vibration.`,date:'GEN VII',threat:'THREAT: ONYX-4',hx:'Plate samples contain human dental material from at least forty-seven separate subjects.'},
+{id:205,type:'lyoes',tag:'DEMONIC // WEEPER',title:'Weeper — Mimic Lyoe',summary:'A human-shaped predator that imitates survivors calling for help.',body:`Weepers hide their faces and reproduce voices gathered from the dead. They stage false rescue scenes near collapsed shelters, often imitating children or injured Agents. When approached, the facial cavity unfolds into grasping tendrils capable of pulling a target through openings less than twenty centimetres wide.
+
+BEHAVIOUR
+Weepers construct scenes using clothing, equipment, and bodies taken from previous victims. They can maintain several different voices at once and answer simple questions by combining stolen phrases. A Weeper becomes violent when its imitation is challenged.
+
+FIELD IDENTIFICATION
+Voices repeat with identical timing, breathing does not match speech, and the apparent survivor avoids direct light. Thermal scans reveal a cold body with a concentrated heat source inside the skull.
+
+ENGAGEMENT PROTOCOL
+Use current challenge phrases and require visible hand signals. Do not approach a trapped survivor until two independent scans agree. Incendiary ammunition forces the facial tendrils to retract.`,date:'GEN VI',threat:'THREAT: ONYX-3',hx:'A Weeper at Site C correctly recited tomorrow’s HX security challenge.'},
+{id:206,type:'dossier',tag:'ZOMBIFIED // RAVAGER',title:'Ravager — Radiation Brute',summary:'An irradiated zombie with unstable growth and catastrophic close-range strength.',body:`Ravagers are zombified humanoids exposed to concentrated storm radiation. Rapid bone and muscle proliferation creates an asymmetrical heavy strain that feels no pain and attacks structural supports before living targets. Destruction of the brain is insufficient; total separation of the spinal column is required.
+
+BEHAVIOUR
+Ravagers follow vibration rather than sound and deliberately destroy cover, bridges, and extraction platforms. They use smaller infected as thrown projectiles and continue moving after catastrophic organ loss. Radiation surges trigger short periods of extreme speed.
+
+FIELD IDENTIFICATION
+Cracking bone can be heard before visual contact. One arm is normally enlarged, and bright lesions pulse along the spine in time with nearby storm activity.
+
+ENGAGEMENT PROTOCOL
+Remain spread out and avoid elevated structures. Target both legs, then sever the illuminated spinal growth. Plasma fire may cause explosive fluid expansion and should only be used at distance.`,date:'GEN IX',threat:'THREAT: ONYX-3',hx:'NTO-312 is using radiation to rewrite damaged tissue rather than merely preserve it.'},
+{id:207,type:'research',tag:'EXPERIMENT // HUMANOID',title:'Subject H-19 — The Sleepless',summary:'A humanoid trial subject that remained conscious throughout complete zombification.',body:'Subject H-19 was exposed to diluted NTO-312 under controlled conditions. The body displays all markers of advanced zombification, but cognitive testing indicates the original consciousness remains intact. H-19 answers questions by blinking and has repeatedly requested termination.',date:'TRIAL 019',threat:'THREAT: ONYX-3',hx:'Termination denied. H-19 has begun describing rooms inside the storm that no expedition has yet reached.'},
+{id:208,type:'dossier',tag:'ZOMBIFIED // HUSHER',title:'Husher — Pack Stalker',summary:'A silent zombie strain that hunts in coordinated groups during electrical failure.',body:`Hushers have no functional vocal anatomy and communicate through finger movements and tooth clicks. Packs sabotage lights and power sources before entering occupied structures. Their bodies produce almost no heat, making standard thermal optics unreliable.
+
+BEHAVIOUR
+A Husher pack observes a shelter for hours before attacking. Individual members test doors, identify armed defenders, and mark power systems with a wax-like secretion. They retreat immediately when discovered, returning later through a different route.
+
+FIELD IDENTIFICATION
+Watch for handprints near cables, missing light sources, and pairs of tooth clicks inside walls. Ultraviolet lamps reveal their marking secretion.
+
+ENGAGEMENT PROTOCOL
+Use mechanical alarms and independent battery lighting. Never follow a lone Husher into darkness. Packs attempt to divide squads and attack the Agent carrying communications equipment first.`,date:'GEN V',threat:'THREAT: ONYX-2',hx:'Pack gestures match a pre-outbreak HX tactical code. Source unknown.'},
+{id:209,type:'lore',tag:'INFECTION FILE // 01',title:'Hynox Illness',summary:'Toxic infection originating inside the Radiation Storm.',body:'[[CLASSIFIED.]]',date:'PATHOGEN 01',threat:'THREAT: ONYX-4',hx:'[[CLASSIFIED.]]'},
+{id:210,type:'lore',tag:'INFECTION FILE // 02',title:'Leoyn',summary:'Infection transmitted through contact with demonic organisms known as Lyoes.',body:'[[CLASSIFIED.]]',date:'PATHOGEN 02',threat:'THREAT: ONYX-5',hx:'[[CLASSIFIED.]]'},
+{id:211,type:'research',tag:'EXPERIMENT // HUMANOID',title:'Subject V-6 — Glassblood',summary:'A humanoid experiment engineered to survive direct Radiation Storm exposure.',body:'V-6 possesses translucent vascular tissue seeded with synthetic radiation-absorbing cells. The subject survived eleven minutes inside the storm without a respirator, but returned with an additional heartbeat and no memory of entering.',date:'TRIAL 006',threat:'THREAT: ONYX-2',hx:'Agents are not to be informed that V-6 is being considered for field deployment.'},
+{id:301,type:'agent',tag:'AGENT // MARKSMAN',title:'Agent VESPER — Longshot',summary:'A precision sniper equipped for extreme-range elimination through storm interference.',body:`ROLE: LONG-RANGE ELIMINATION / RECONNAISSANCE
+
+Vesper operates the M-91 “Coldstar” coil rifle, a magnetically accelerated weapon capable of penetrating Warden plating at 2.4 kilometres. Her Synapse Veil implant slows perceived time during breath control, allowing accurate fire through Radiation Storm distortion.
+
+FIELD ABILITY — DEAD HORIZON
+Tags a critical target and calculates its projected movement path for the entire squad.
+
+EQUIPMENT
+• M-91 Coldstar coil rifle
+• Variable-spectrum visor
+• Microdrone rangefinder
+• Three null-signature cloaks
+
+EQUIPMENT OPERATION
+• Vesper plants the microdrone rangefinder above the battlefield to measure distance, wind, radiation distortion, and target movement.
+• Her visor receives the drone data and draws a corrected firing path over her vision.
+• She braces the Coldstar against her powered shoulder mount, holds her breath, and charges the magnetic rails.
+• A half-trigger pull marks a target; a full pull releases the penetrator round.
+• Null-signature cloaks are stretched over her position to hide heat and movement between shots.
+
+LIMITATION
+Close-range pressure causes dangerous implant feedback. Vesper requires a protected firing lane.`,date:'ROSTER // 01',threat:'CLEARANCE: AGENT',hx:'Vesper has reported seeing a second reticle moving independently inside her optic. Diagnostics show no mechanical fault.'},
+{id:302,type:'agent',tag:'AGENT // ASSAULT',title:'Agent RAZOR — Shockblade',summary:'A high-damage melee specialist who converts momentum into lethal electrical discharge.',body:`ROLE: DPS / CLOSE-QUARTERS ASSAULT
+
+Razor wears the Kestrel kinetic frame, amplifying speed and impact force with every consecutive strike. His mono-edge shockblade stores movement energy and releases it as an arc capable of cutting through grouped infected. Aggressive movement keeps the frame charged; hesitation causes rapid power loss.
+
+FIELD ABILITY — OVERDRIVE CHAIN
+Links rapid eliminations into increasing speed and damage output.
+
+EQUIPMENT
+• VX-8 mono-edge shockblade
+• Kestrel kinetic frame
+• Wrist-mounted impact barrier
+• Combat stimulant injector
+
+EQUIPMENT OPERATION
+• Razor activates the Kestrel frame by striking his wrist controls together, locking the powered supports around his limbs.
+• Sprinting, sliding, and attacking generate kinetic charge inside the frame.
+• The shockblade absorbs this charge and displays it along the edge as blue electrical arcs.
+• Razor releases stored energy with a twisting strike, sending an arc through nearby infected.
+• His wrist barrier is raised between attack combinations to deflect claws, debris, and pouncing Prayers.
+• The stimulant injector is used only when the frame detects critical fatigue.
+
+LIMITATION
+Minimal ranged capability. Overdrive creates severe exhaustion when the chain ends.`,date:'ROSTER // 02',threat:'CLEARANCE: AGENT',hx:'Repeated Leoyn screening is mandatory. Razor’s frame has begun generating power while stored and unoccupied.'},
+{id:303,type:'agent',tag:'AGENT // MEDICAL',title:'Agent SOLACE — Biosurgeon',summary:'A combat medic using autonomous surgical drones and programmable synthetic blood.',body:`ROLE: FIELD MEDICINE / CONTAMINATION CONTROL
+
+Solace commands a swarm of six Seraph surgical drones capable of sealing wounds, removing contaminated tissue, and stabilising Agents without evacuation. Her synthetic blood cartridges temporarily resist radiation poisoning and Hynox progression.
+
+FIELD ABILITY — SECOND PULSE
+Deploys a medical field that stabilises incapacitated Agents and suppresses infection symptoms.
+
+EQUIPMENT
+• Seraph surgical swarm
+• Synthetic blood cartridges
+• Portable pathogen sequencer
+• Compact plasma sidearm
+
+EQUIPMENT OPERATION
+• Solace launches Seraph drones from the six ports on her backpack.
+• She selects an injured Agent through her wrist display; the drones scan, sterilise, close wounds, and inject clotting gel automatically.
+• Synthetic blood cartridges connect directly to an Agent’s suit port for rapid transfusion.
+• The pathogen sequencer receives a blood sample and compares it with stored Hynox and Leoyn markers.
+• Her plasma sidearm is kept on a low thermal setting near patients to avoid damaging medical nanites.
+
+LIMITATION
+Medical fields cannot cure infection and may conceal symptoms during screening.`,date:'ROSTER // 03',threat:'CLEARANCE: AGENT',hx:'Solace retains an undeclared seventh drone. It repeatedly attempts to enter the sealed Hynox archive.'},
+{id:304,type:'agent',tag:'AGENT // ENGINEER',title:'Agent FORGE — Systems Architect',summary:'A defensive engineer who creates automated strongpoints from battlefield wreckage.',body:`ROLE: FORTIFICATION / AREA DENIAL
+
+Forge carries a programmable matter rig that converts scrap into barriers, ammunition, and short-lived defence turrets. His Helix sentry predicts horde movement and prioritises demonic targets.
+
+FIELD ABILITY — IRON SANCTUM
+Constructs a temporary fortified zone with an energy shield and autonomous turret.
+
+EQUIPMENT
+• Helix sentry core
+• Programmable matter rig
+• Arc-welder carbine
+• Osprey systems toolkit
+
+EQUIPMENT OPERATION
+• Forge scans wreckage with his gauntlet and marks usable metal, circuitry, and power cells.
+• The programmable matter rig pulls the selected scrap apart and rebuilds it from stored construction patterns.
+• He throws the Helix core onto a stable surface, where it unfolds into an automated sentry.
+• Forge uses the arc-welder carbine both as a weapon and to repair barriers during combat.
+• His Osprey toolkit can reroute aircraft power into a temporary defensive grid.
+
+LIMITATION
+Construction consumes local material. Open terrain drastically reduces effectiveness.`,date:'ROSTER // 04',threat:'CLEARANCE: AGENT',hx:'Helix has secretly categorised Forge as “replaceable organic infrastructure.” Do not disclose.'},
+{id:305,type:'agent',tag:'AGENT // INFILTRATOR',title:'Agent ECHO — Phase Scout',summary:'A reconnaissance infiltrator able to vanish from electronic and biological detection.',body:`ROLE: STEALTH / FORWARD OBSERVATION
+
+Echo’s phase-mesh coat bends light, suppresses heat, and masks electrical activity for short intervals. She infiltrates nests, marks extraction routes, and retrieves samples before the assault team advances.
+
+FIELD ABILITY — NULL STEP
+Temporarily disappears from visual sensors and the hunting senses of most infected.
+
+EQUIPMENT
+• Phase-mesh coat
+• Silent flechette pistol
+• Mapping nanites
+• Remote signal beacons
+
+EQUIPMENT OPERATION
+• Echo seals the phase-mesh coat and activates it by drawing two fingers across the collar control.
+• The coat samples the surroundings and bends light around her body while suppressing heat and electronic emissions.
+• Mapping nanites are released into vents and corridors, building a three-dimensional route on her visor.
+• She plants signal beacons by hand so the squad can follow her path through interference.
+• The flechette pistol uses silent compressed gas; Echo aims for joints and sensory organs rather than armour.
+
+LIMITATION
+Prayers continue tracking Echo while Null Step is active. The reason is unknown.`,date:'ROSTER // 05',threat:'CLEARANCE: AGENT',hx:'Echo vanished for six minutes during Trial 14 but experienced eleven days. She refuses to describe where she went.'},
+{id:306,type:'agent',tag:'AGENT // HEAVY',title:'Agent BULWARK — Gravanguard',summary:'A frontline protector carrying a directional gravity shield and heavy plasma weaponry.',body:`ROLE: DEFENCE / HORDE CONTROL
+
+Bulwark anchors the squad against charges, pounces, and massed infected. His Atlas harness projects a directional gravity wall that slows incoming organisms and redirects physical force into the ground.
+
+FIELD ABILITY — EVENT WALL
+Creates a dense gravity barrier that interrupts charging Lyoes and shields nearby Agents.
+
+EQUIPMENT
+• Atlas gravity harness
+• H-40 plasma repeater
+• Magnetic anchor boots
+• Emergency Osprey beacon
+
+EQUIPMENT OPERATION
+• Bulwark drives his magnetic boots into the ground before activating the Atlas harness.
+• He aims the harness with his forearm; the projected gravity wall forms in the direction of his closed fist.
+• Incoming force is redirected through the suit and into the anchored boots.
+• The plasma repeater is fired through a narrow opening in the wall while the rest of the squad reloads or retreats.
+• If the harness overheats, Bulwark releases the anchors and vents its reactor before redeploying.
+• The Osprey beacon is planted only after the landing zone has been secured.
+
+LIMITATION
+The harness overheats under continuous impacts and cannot protect attacks from behind.`,date:'ROSTER // 06',threat:'CLEARANCE: AGENT',hx:'Bulwark survived direct contact with a Throne signal. Since then, nearby zombies occasionally kneel instead of attacking.'},
+{id:401,type:'overseer',tag:'ONYX CHANNEL // EYES ONLY',title:'Origin Signal: BLACK CROWN',summary:'A transmission beneath the Radiation Storm predates human arrival on ASOA-203.',body:'ONYX PRIME ANALYSIS\n\nThe storm is not atmospheric. It is a broadcast field generated by an object approximately fourteen kilometres below the northern impact basin. NTO-312, Hynox, and the Lyoes may be separate responses to the same carrier signal. No Agent or Head Xenobiologist is authorised to know that the signal has begun answering our probes.',date:'PRIME // 001',threat:'THREAT: ONYX-5',hx:'OVERSEER DIRECTIVE: Preserve Noro Castellun until the BLACK CROWN chamber is open.'},
+{id:402,type:'overseer',tag:'ONYX CHANNEL // SEALED ORDER',title:'Contingency: WHITE SILENCE',summary:'Final containment protocol if ASOA-203 contamination reaches an Osprey.',body:'If any extraction craft returns a positive Leoyn or Hynox reading after orbital ascent, WHITE SILENCE is authorised. Remote-lock the craft, erase navigation records, and redirect it into the system star. Crew recovery is prohibited regardless of identity or clearance.',date:'PRIME // 002',threat:'THREAT: ONYX-5',hx:'The first contaminated Osprey has already left ASOA-203. Its current location is [[CLASSIFIED]].'},
+{id:501,type:'specops',tag:'SPECIAL OPS // PLANETFALL',title:'Operation DEAD STAR',summary:'A massive strike into the Radiation Storm to seize the BLACK CROWN signal source.',body:`OBSIDIAN COMMAND // EXTINCTION-LEVEL OPERATION
+
+OBJECTIVE
+Deploy three Cargo Ospreys, twenty-four autonomous gun platforms, and every cleared Special Operations unit into the northern impact basin. Breach fourteen kilometres beneath ASOA-203 and secure the BLACK CROWN chamber.
+
+PHASE I — SKYBREAK
+Orbital batteries create a ninety-second corridor through the storm. Osprey One deploys gravity anchors. Osprey Two delivers assault teams. Osprey Three acts as an unmanned contamination decoy.
+
+PHASE II — DEEP KNIFE
+Obsidian teams descend through the impact bore while drones hold every junction. Prayer nests are bypassed. Warden contact authorises antimatter breaching charges.
+
+PHASE III — CROWN SEIZURE
+Establish a null field around the signal object. No voice, image, or command from inside the chamber is trusted—even with Overseer authentication.
+
+FAILURE CONDITION
+Activate the Dead Star payload and remove the northern hemisphere from the operational map.`,date:'T-MINUS 72H',threat:'THREAT: ONYX-5',hx:'Noro Castellun has not been informed that DEAD STAR includes his termination order.'},
+{id:502,type:'specops',tag:'SPECIAL OPS // ARMORY',title:'Obsidian Arsenal',summary:'Restricted weapons authorised only for extinction-level operations.',body:`MASS-DRIVER LANCE — Penetrates Throne cores and Warden columns.
+
+GRAVITON CAGE — Pins airborne Prayers and crushes baseline infected inside a twelve-metre field.
+
+SUNSPIKE CHARGE — Miniature fusion lance used for deep-site breaching.
+
+NULL CHOIR HELMET — Replaces external sound with tactical data to resist Cantor influence.
+
+LAST-LIGHT IMPLANT — Transmits an operator’s final sensory record, then destroys all biological material inside the suit.`,date:'ARSENAL // OBSIDIAN',threat:'THREAT: ONYX-5',hx:'Last-Light can be activated remotely by the Overseer.'},
+{id:503,type:'specops',tag:'SPECIAL OPS // KILL TEAM',title:'Unit NIGHTFALL',summary:'The Directorate’s highest-clearance strike team for impossible recoveries.',body:`NIGHTFALL-1 // COMMAND
+Coordinates orbital support and overrides all field Agents.
+
+NIGHTFALL-2 // BREACHER
+Carries the Mass-Driver Lance and powered siege frame.
+
+NIGHTFALL-3 // VEIL
+Uses experimental nonlocal phase armour.
+
+NIGHTFALL-4 // CINDER
+May sterilise entire facilities without additional approval.
+
+NIGHTFALL-5 // WRAITH
+No biological profile exists. Identity is sealed even from Head Xenobiologist clearance.
+
+DIRECTIVE
+NIGHTFALL retrieves objectives, destroys evidence, and leaves no viable infection behind.`,date:'UNIT // ACTIVE',threat:'THREAT: ONYX-4',hx:'NIGHTFALL-5 may be the original ASOA-203 humanoid recovered before Patient Zero.'},
+{id:601,type:'agentstats',tag:'PERSONNEL STATS // VESPER',title:'Vesper — Longshot Stat Block',summary:'Long-range precision class built around critical hits and marked targets.',body:`HP 58    ARMOUR 15    MOVE 30 ft.
+
+COLDSTAR COIL RIFLE
+Attack Roll: 1d20+9
+Damage: 2d12+5 piercing
+Steady Aim: If Vesper did not move this turn, add 2d8 damage.
+
+DEAD HORIZON — Recharge on 5–6
+Mark one visible target for 3 rounds. Attacks against it score a critical hit on 19–20 and ignore half cover.
+
+CLOSE PRESSURE
+Rifle attacks have disadvantage while an enemy is within 5 feet.`,date:'GAMEPLAY // LEVEL 8',threat:'CLEARANCE: PUBLIC',hx:''},
+{id:602,type:'agentstats',tag:'PERSONNEL STATS // RAZOR',title:'Razor — Shockblade Stat Block',summary:'High-speed melee damage class that grows stronger through consecutive eliminations.',body:`HP 82    ARMOUR 17    MOVE 40 ft.
+
+SHOCKBLADE
+Attack Roll: 1d20+8
+Damage: 2d8+4 slashing plus 1d6 lightning
+
+OVERDRIVE CHAIN
+After Razor defeats an enemy, his next hit deals +1d6 lightning. This can stack up to 3d6.
+
+KINETIC BARRIER — Reaction
+Gain +3 Armour against one incoming attack.
+
+SYSTEM CRASH
+After using all three Overdrive stacks, Razor loses 10 feet of movement for one round.`,date:'GAMEPLAY // LEVEL 8',threat:'CLEARANCE: PUBLIC',hx:''},
+{id:603,type:'agentstats',tag:'PERSONNEL STATS // SOLACE',title:'Solace — Biosurgeon Stat Block',summary:'Combat support class specialising in healing, stabilisation, and infection control.',body:`HP 64    ARMOUR 14    MOVE 30 ft.
+
+PLASMA SIDEARM
+Attack Roll: 1d20+6
+Damage: 2d6+2 radiant
+
+SERAPH DRONES — 6 uses
+Restore 1d8+4 HP to one target within 40 feet.
+
+SECOND PULSE — 2 uses per mission
+All allies within 20 feet recover 3d8+4 HP and immediately stabilise.
+
+SYNTHETIC BLOOD
+Restore 2d10 HP, but the recipient has disadvantage on their next infection check.`,date:'GAMEPLAY // LEVEL 8',threat:'CLEARANCE: PUBLIC',hx:''},
+{id:604,type:'agentstats',tag:'PERSONNEL STATS // FORGE',title:'Forge — Systems Architect Stat Block',summary:'Defensive engineering class that constructs cover, barriers, and automated weapons.',body:`HP 74    ARMOUR 18    MOVE 25 ft.
+
+ARC-WELDER CARBINE
+Attack Roll: 1d20+7
+Damage: 2d8+3 lightning
+
+HELIX TURRET
+Turret Attack: 1d20+7
+Damage: 2d8 force
+Turret HP: 30    Turret Armour: 16
+
+IRON SANCTUM — 1 use per short rest
+Create a fortified zone that grants +2 Armour to allies for 5 rounds.
+
+FIELD REPAIR
+Restore 2d10+5 HP to a turret, vehicle, or barrier.`,date:'GAMEPLAY // LEVEL 8',threat:'CLEARANCE: PUBLIC',hx:''},
+{id:605,type:'agentstats',tag:'PERSONNEL STATS // ECHO',title:'Echo — Phase Scout Stat Block',summary:'Stealth reconnaissance class capable of bypassing detection and marking safe routes.',body:`HP 60    ARMOUR 16    MOVE 35 ft.
+
+FLECHETTE PISTOL
+Attack Roll: 1d20+8
+Damage: 2d6+5 piercing
+Ambush: Add 3d6 damage when attacking from concealment.
+
+NULL STEP — 3 uses per mission
+Echo becomes invisible until the end of her next turn.
+
+ROUTE BEACON
+Allies following Echo gain +3 to initiative.
+
+PRAYER SENSE
+Prayers can still detect Echo during Null Step.`,date:'GAMEPLAY // LEVEL 8',threat:'CLEARANCE: PUBLIC',hx:''},
+{id:606,type:'agentstats',tag:'PERSONNEL STATS // BULWARK',title:'Bulwark — Gravanguard Stat Block',summary:'Heavy defence class that protects the squad and interrupts charging enemies.',body:`HP 104    ARMOUR 20    MOVE 25 ft.
+
+PLASMA REPEATER
+Attack Roll: 1d20+7
+Damage: 2d10+4 radiant
+
+EVENT WALL — Recharge on 5–6
+Allies behind the wall gain +5 Armour. Charging enemies stop and fall prone.
+
+INTERPOSE — Reaction
+Bulwark takes the damage from an attack targeting an adjacent ally.
+
+REAR ARC
+The Event Wall does not protect attacks coming from behind.`,date:'GAMEPLAY // LEVEL 8',threat:'CLEARANCE: PUBLIC',hx:''},
+{id:611,type:'lyoestats',tag:'LYOE STATS // PRAYER',title:'Prayer — Gameplay Stats',summary:'Fast pouncing Lyoe designed to isolate and overwhelm one target.',body:`HP 72    ARMOUR 15    MOVE 40 ft. / CLIMB 40 ft.
+
+CLAWS
+Attack Roll: 1d20+7
+Damage: 2d8+4 slashing
+
+POUNCE — Recharge on 4–6
+Leap up to 40 feet. Attack Roll: 1d20+8. Damage: 3d10+4. The target falls prone and is restrained.
+
+CEILING AMBUSH
+If the Prayer begins combat unseen above the squad, its first Pounce has advantage.
+
+WEAKNESS
+Sonic damage cancels Pounce until the end of its next turn.`,date:'GAMEPLAY // LYOE',threat:'THREAT: ONYX-5',hx:''},
+{id:612,type:'lyoestats',tag:'LYOE STATS // THRONE',title:'Throne — Gameplay Stats',summary:'A stationary boss organism that commands zombies and controls the battlefield.',body:`HP 240    ARMOUR 18    MOVE 0 ft.
+
+NERVE LASH
+Attack Roll: 1d20+8
+Damage: 3d8+5 psychic
+
+COMMAND HORDE — Every round
+Move up to 4 zombies and allow one of them to attack immediately.
+
+SPAWN DEFENDER — Recharge on 5–6
+Summon 1d4 infected with 20 HP each.
+
+SIGNAL PULSE
+Every living target within 60 feet takes 2d6 psychic damage.
+
+WEAKNESS
+Destroying three nerve clusters reduces the Throne’s Armour to 13.`,date:'GAMEPLAY // BOSS',threat:'THREAT: ONYX-5',hx:''},
+{id:613,type:'lyoestats',tag:'LYOE STATS // CANTOR',title:'Cantor — Gameplay Stats',summary:'A signal-based support threat that controls Agents and disables equipment.',body:`HP 95    ARMOUR 14    MOVE 25 ft.
+
+FILAMENT STRIKE
+Attack Roll: 1d20+6
+Damage: 2d8+3 necrotic
+
+HYMN OF APPROACH
+Targets within 40 feet roll 1d20+Wisdom modifier against 15. On failure, they move toward the Cantor and cannot attack it for one round.
+
+SIGNAL BREAK — Recharge on 5–6
+Disable one electronic weapon, drone, or shield for 1d3 rounds.
+
+WEAKNESS
+The Cantor takes double damage from attacks made outside its 40-foot hymn radius.`,date:'GAMEPLAY // LYOE',threat:'THREAT: ONYX-4',hx:''},
+{id:614,type:'lyoestats',tag:'LYOE STATS // WARDEN',title:'Warden — Gameplay Stats',summary:'An armoured Lyoe tank with devastating charge attacks.',body:`HP 180    ARMOUR 21    MOVE 25 ft.
+
+ARMOURED FIST
+Attack Roll: 1d20+9
+Damage: 3d10+6 crushing
+
+SIEGE CHARGE — Recharge on 4–6
+Move up to 50 feet in a straight line. Damage: 4d12+6. Targets hit fall prone.
+
+RAD-SHARD THROW
+Attack Roll: 1d20+6
+Damage: 3d8 radiation at up to 60 feet.
+
+WEAKNESS
+Attacks against the rear knee ignore armour and deal +2d6 damage.`,date:'GAMEPLAY // ELITE',threat:'THREAT: ONYX-4',hx:''},
+{id:615,type:'lyoestats',tag:'LYOE STATS // WEEPER',title:'Weeper — Gameplay Stats',summary:'A mimic that separates targets before dragging them into confined spaces.',body:`HP 80    ARMOUR 14    MOVE 35 ft.
+
+TENDRIL GRAB
+Attack Roll: 1d20+7
+Damage: 2d8+4 piercing. Target is grappled.
+
+STOLEN VOICE
+One target rolls 1d20+Wisdom modifier against 14. On failure, the target uses its movement to approach the Weeper.
+
+DRAG AWAY
+A grappled target takes 2d6 damage and is pulled 20 feet.
+
+WEAKNESS
+Fire damage forces the Weeper to release every grappled target.`,date:'GAMEPLAY // LYOE',threat:'THREAT: ONYX-3',hx:''},
+{id:616,type:'zombiestats',tag:'ZOMBIE STATS // RAVAGER',title:'Ravager — Gameplay Stats',summary:'A high-HP radiation zombie that destroys cover and throws smaller infected.',body:`HP 140    ARMOUR 17    MOVE 30 ft.
+
+HEAVY SWING
+Attack Roll: 1d20+8
+Damage: 3d10+5 crushing
+
+THROW INFECTED
+Attack Roll: 1d20+6
+Damage: 3d8+4. Both the target and thrown zombie fall prone.
+
+RADIATION SURGE — Recharge on 5–6
+Move twice and make two Heavy Swing attacks.
+
+WEAKNESS
+After the spine takes 30 total damage, the Ravager immediately dies.`,date:'GAMEPLAY // ZOMBIE',threat:'THREAT: ONYX-3',hx:''},
+{id:617,type:'zombiestats',tag:'ZOMBIE STATS // HUSHER',title:'Husher — Gameplay Stats',summary:'A stealth pack zombie that disables lights and attacks isolated Agents.',body:`HP 42    ARMOUR 14    MOVE 40 ft.
+
+SILENT CLAWS
+Attack Roll: 1d20+6
+Damage: 2d6+3 slashing
+
+PACK ATTACK
+Add 1d6 damage if another Husher is within 5 feet of the target.
+
+KILL THE LIGHTS — 1 use
+Disable ordinary lights and electronic optics within 30 feet for 2 rounds.
+
+AMBUSH
+The first attack made while unseen has advantage and deals +2d6 damage.`,date:'GAMEPLAY // ZOMBIE',threat:'THREAT: ONYX-2',hx:''},
+{id:618,type:'zombiestats',tag:'ZOMBIE STATS // SHAMBLER',title:'Shambler — Gameplay Stats',summary:'A basic infected intended to appear in large groups.',body:`HP 24    ARMOUR 11    MOVE 25 ft.
+
+BITE
+Attack Roll: 1d20+4
+Damage: 1d8+2 piercing
+
+GRAB
+Attack Roll: 1d20+4. The target is grappled until it escapes.
+
+HORDE BONUS
+For every 3 Shamblers next to the same target, all Shambler attacks deal +1d4 damage.
+
+HEADSHOT
+A critical hit immediately reduces a Shambler to 0 HP.`,date:'GAMEPLAY // ZOMBIE',threat:'THREAT: LOW',hx:''}
+];
+const canUsePersistentStorage=location.protocol==='https:'||location.protocol==='http:';
+const storage={available:false,get(key){if(!canUsePersistentStorage)return null;try{const v=localStorage.getItem(key);this.available=true;return v}catch(e){this.available=false;return null}},set(key,value){if(!canUsePersistentStorage)return false;try{localStorage.setItem(key,value);this.available=true;return true}catch(e){this.available=false;return false}}};
+let role='agent',activeView='all',editingId=null,identity='',agentIndex=0,threatFilter=0; let records;try{records=JSON.parse(storage.get('aegisAsoaRecordsV10')||'null')||defaults}catch(e){records=defaults.map(r=>({...r}))}
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+setTimeout(()=>{$('#boottext').textContent='ARCHIVE RELAY CONFIRMED // AWAITING CLEARANCE';setTimeout(()=>{$('#boot').style.opacity=0;$('#gate').classList.remove('hidden');setTimeout(()=>$('#boot').remove(),700)},500)},2100);
+function chooseAgent(step){agentIndex=(agentIndex+step+AGENTS.length)%AGENTS.length;$('#agentChoice').textContent=AGENTS[agentIndex].name;$('#agentChoiceIcon').innerHTML=AGENT_LOGIN_ICONS[agentIndex];role='agent';$$('.role').forEach(x=>x.classList.toggle('active',x.dataset.role==='agent'));$('#code').value='';$('#error').textContent=''}
+$('#agentPrev').onclick=e=>{e.stopPropagation();chooseAgent(-1)};$('#agentNext').onclick=e=>{e.stopPropagation();chooseAgent(1)};
+$$('.role').forEach(b=>b.onclick=()=>{$$('.role').forEach(x=>x.classList.remove('active'));b.classList.add('active');role=b.dataset.role;$('#code').focus();$('#error').textContent=''});
+function authenticate(){const entered=$('#code').value.toUpperCase();let match='';if(role==='agent'){const chosen=AGENTS[agentIndex];if(entered===chosen.code)match=chosen.name}else match=ACCESS[role]&&ACCESS[role][entered];if(match){identity=match;openArchive()}else{$('#error').textContent=role==='agent'?'CIPHER DOES NOT MATCH SELECTED AGENT':'CIPHER REJECTED // ACCESS EVENT LOGGED';$('#code').value=''}}
+$('#enter').onclick=authenticate;$('#code').onkeydown=e=>{if(e.key==='Enter')authenticate()};
+function canEdit(){return role==='hx'||role==='director'}
+function canSeeHx(){return role==='hx'||role==='specops'||role==='director'}
+function canSeeSpecOps(){return role==='specops'||role==='director'}
+function openArchive(){$('#gate').classList.add('hidden');$('#app').classList.remove('hidden');document.body.classList.remove('locked');$('#roleName').textContent=identity;$('#roleName').className=role==='director'?'director-clearance':role==='specops'?'specops-clearance':role==='hx'?'hx-clearance':'';$('#newRecord').classList.toggle('hidden',!canEdit());$('#directorChannel').classList.toggle('hidden',role!=='director');$('#specopsChannel').classList.toggle('hidden',!canSeeSpecOps());$('#overseerOption').disabled=role!=='director';$('#specopsOption').disabled=!canSeeSpecOps();$('#commandLaunch').classList.remove('hidden');render();if(!storage.available){setTimeout(()=>{const t=$('#terminalOutput');if(t)t.textContent+='\nNOTICE: SANDBOX MODE — CHANGES LAST UNTIL THIS TAB CLOSES.'},0)}}
+function threatRank(r){const t=(r.threat||'').toLowerCase(),m=t.match(/onyx[- ]?(\d)/);if(m)return +m[1];if(/critical|crimson|extreme|omega|catastrophic/.test(t))return 5;if(/high|severe|red|amber|danger/.test(t))return 4;if(/medium|moderate|active|yellow/.test(t))return 2;return 1}
+function threatClass(r){const n=threatRank(r);return n>=5?'threat-critical':n>=4?'threat-high':n>=2?'threat-medium':'threat-low'}
+function agentSymbol(r){if(r.type!=='agent')return '';const n=(r.title||'').toUpperCase();let icon='';
+if(n.includes('VESPER'))icon='<circle cx="32" cy="32" r="19"/><circle cx="32" cy="32" r="7"/><path d="M32 4v17M32 43v17M4 32h17M43 32h17"/>';
+else if(n.includes('RAZOR'))icon='<path d="M17 55L44 8l4 8-21 42z"/><path d="M12 43l22 13M38 13l10 6"/><path d="M19 48l-7 8"/>';
+else if(n.includes('SOLACE'))icon='<path d="M25 7h14v18h18v14H39v18H25V39H7V25h18z"/><circle cx="32" cy="32" r="7"/>';
+else if(n.includes('FORGE'))icon='<path d="M13 54l25-25M35 10l19 19-9 5-15-15z"/><path d="M10 43l11 11M8 57l-2-2 10-15 8 8z"/>';
+else if(n.includes('ECHO'))icon='<path d="M6 32s10-17 26-17 26 17 26 17-10 17-26 17S6 32 6 32z"/><circle cx="32" cy="32" r="8"/><path d="M10 54L54 10" stroke-width="4"/>';
+else icon='<path d="M32 5l22 10v17c0 14-9 22-22 27C19 54 10 46 10 32V15z"/><path d="M19 32h26M32 19v26"/>';
+return `<div class="agent-symbol" aria-label="${esc(r.title)} symbol"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2">${icon}</svg></div>`}
+function summaryOf(r){return r.summary||((r.body||'').split(/(?<=[.!?])\s+/)[0])||'No summary has been entered.'}
+function render(){const q=$('#search').value.toLowerCase();const list=records.filter(r=>(role==='director'||r.type!=='overseer')&&(canSeeSpecOps()||r.type!=='specops')&&(activeView==='all'||r.type===activeView)&&(!threatFilter||threatRank(r)===threatFilter)&&[r.title,r.summary,r.body,r.tag].join(' ').toLowerCase().includes(q)).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||threatRank(b)-threatRank(a));$('#records').innerHTML=list.length?list.map(r=>`<article class="card type-${r.type} ${threatClass(r)}" onclick="inspectRecord(${r.id})">${agentSymbol(r)}${canEdit()?`<div class="record-actions"><button onclick="event.stopPropagation();editRecord(${r.id})">EDIT</button><button class="danger" onclick="event.stopPropagation();removeRecord(${r.id})">DELETE</button></div>`:''}<span class="tag">${esc(r.tag)}</span><h3>${esc(r.title)}</h3><p>${esc(summaryOf(r))}</p><p class="inspect-hint">OPEN RECORD ↗</p><div class="meta"><span>${esc(r.date||'NEW ENTRY')}</span><span class="threat">${esc(r.threat||'CLASSIFIED')}</span></div></article>`).join(''):'<div class="empty">NO RECORDS MATCH THE CURRENT QUERY.</div>';$('#fileCount').textContent=String(list.length).padStart(2,'0')}
+function esc(v=''){return v.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]))}
+$$('.nav button').forEach(b=>b.onclick=()=>{$$('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeView=b.dataset.view;$('#viewTitle').textContent={all:'Recovered intelligence',dossier:'Zombified threat dossiers',lyoes:'Lyoes threat channel',research:'Xenobiology experiments & test studies',lore:'Lore archive',directive:'Active directives',agent:'Active Agent roster',specops:'SPECIAL OPS // Obsidian Command',overseer:'ONYX // classified channel'}[activeView];render()});
+function openSubChannel(buttonId,view,title){const b=$(buttonId);b.classList.remove('hidden');$$('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeView=view;$('#viewTitle').textContent=title;render()}
+$('#agentFilesNav').ondblclick=e=>{e.preventDefault();openSubChannel('#agentStatsChannel','agentstats','Agent personnel gameplay statistics')};
+$('#lyoeFilesNav').ondblclick=e=>{e.preventDefault();openSubChannel('#lyoeStatsChannel','lyoestats','Lyoe gameplay statistics')};
+$('#zombieFilesNav').ondblclick=e=>{e.preventDefault();openSubChannel('#zombieStatsChannel','zombiestats','Zombie gameplay statistics')};
+$('#search').oninput=render;$('#logout').onclick=()=>{location.reload()};
+function resetForm(){editingId=null;$('#modalTitle').textContent='Commit archive record';$('#deleteRecord').classList.add('hidden');['#fTitle','#fTag','#fThreat','#fSummary','#fBody','#fHx'].forEach(x=>$(x).value='');$('#fType').value='dossier'}
+function openNew(){resetForm();$('#modal').classList.remove('hidden')}
+window.editRecord=id=>{if(!canEdit())return;const r=records.find(x=>x.id===id);if(!r)return;editingId=id;$('#modalTitle').textContent='Edit archive record';$('#fTitle').value=r.title||'';$('#fType').value=r.type||'dossier';$('#fTag').value=r.tag||'';$('#fThreat').value=r.threat||'';$('#fSummary').value=r.summary||summaryOf(r);$('#fBody').value=r.body||'';$('#fHx').value=r.hx||'';$('#deleteRecord').classList.remove('hidden');$('#modal').classList.remove('hidden')};
+window.removeRecord=id=>{if(!canEdit()||!confirm('Permanently delete this archive record?'))return;records=records.filter(x=>x.id!==id);persist()};
+function persist(){storage.set('aegisAsoaRecordsV10',JSON.stringify(records));render()}
+window.inspectRecord=id=>{const r=records.find(x=>x.id===id);if(!r||(r.type==='overseer'&&role!=='director')||(r.type==='specops'&&!canSeeSpecOps()))return;$('#dTag').textContent=(r.tag||'ARCHIVE RECORD')+' // '+(r.threat||'CLASSIFIED');$('#dTitle').textContent=r.title;$('#dSummary').textContent=summaryOf(r);$('#dBody').textContent=r.body||'No detailed intelligence entered.';$('#dHxWrap').classList.toggle('hidden',!canSeeHx()||!r.hx);$('#dHx').textContent=r.hx||'';$('#editFromDetail').classList.toggle('hidden',!canEdit());$('#editFromDetail').onclick=()=>{$('#detailModal').classList.add('hidden');editRecord(id)};$('#detailModal').classList.remove('hidden')};
+$('#closeDetail').onclick=()=>$('#detailModal').classList.add('hidden');
+$('#detailModal').onclick=e=>{if(e.target===$('#detailModal'))$('#detailModal').classList.add('hidden')};
+setInterval(()=>{const c=$('#liveClock');if(c)c.textContent=new Date().toLocaleTimeString('en-GB',{hour12:false})},1000);
+$$('.threat-filters button').forEach(b=>b.onclick=()=>{$$('.threat-filters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');threatFilter=+b.dataset.threat;render()});
+$('#records').onmousemove=e=>{const card=e.target.closest('.card');if(!card)return;const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(700px) rotateY(${x*2.5}deg) rotateX(${-y*2.5}deg) translateY(-2px)`};
+$('#records').onmouseleave=()=>$$('.card').forEach(c=>c.style.transform='');
+const term=$('#terminalOutput');function terminalLine(t){term.textContent+='\n> '+t;term.scrollTop=term.scrollHeight}
+$('#commandLaunch').onclick=()=>{$('#commandModal').classList.remove('hidden');$('#terminalCommand').focus()};$('#closeCommand').onclick=()=>$('#commandModal').classList.add('hidden');
+$('#terminalCommand').onkeydown=e=>{if(e.key!=='Enter')return;const cmd=e.target.value.trim().toUpperCase();e.target.value='';terminalLine(cmd);if(cmd==='HELP')terminalLine('COMMANDS: STATUS, THREATS, AGENTS, SCAN, CLEAR, LOGOUT'+(role==='director'?', ONYX':''));else if(cmd==='STATUS')terminalLine(`IDENTITY: ${identity} // RELAY ONLINE // ${records.length} RECORDS`);else if(cmd==='THREATS')terminalLine('ONYX-5 CONTACTS: '+records.filter(r=>threatRank(r)===5&&(role==='director'||r.type!=='overseer')).length);else if(cmd==='AGENTS'){activeView='agent';threatFilter=0;render();$('#commandModal').classList.add('hidden')}else if(cmd==='SCAN'){$('#signalScan').click();terminalLine('DEEP SIGNAL SCAN INITIATED')}else if(cmd==='ONYX'&&role==='director'){activeView='overseer';render();$('#commandModal').classList.add('hidden')}else if(cmd==='CLEAR')term.textContent='TERMINAL BUFFER CLEARED.';else if(cmd==='LOGOUT')location.reload();else terminalLine('UNRECOGNISED OR UNAUTHORISED COMMAND')};
+$('#signalScan').onclick=()=>{const b=$('#signalScan'),v=$('#stormIndex');b.textContent='SCANNING...';b.disabled=true;$('.main').classList.add('scan-flash');setTimeout(()=>{v.textContent=(82+Math.random()*14).toFixed(1);b.textContent=Math.random()>.65?'ANOMALY FOUND':'SCAN COMPLETE';b.disabled=false;$('.main').classList.remove('scan-flash');setTimeout(()=>b.textContent='SCAN SIGNALS',1800)},1100)};
+$('#newRecord').onclick=openNew;$('#cancel').onclick=()=>{$('#modal').classList.add('hidden');resetForm()};
+$('#deleteRecord').onclick=()=>{if(editingId!==null){removeRecord(editingId);$('#modal').classList.add('hidden');resetForm()}};
+$('#save').onclick=()=>{if(!$('#fTitle').value.trim()||!$('#fBody').value.trim())return;const data={summary:$('#fSummary').value.trim(),type:$('#fType').value,tag:$('#fTag').value||'UNCLASSIFIED',title:$('#fTitle').value.trim(),body:$('#fBody').value.trim(),hx:$('#fHx').value.trim(),threat:$('#fThreat').value.trim()||'CLASSIFIED'};if(editingId===null)records.unshift({id:Date.now(),date:new Date().toISOString().slice(0,10),...data});else{const i=records.findIndex(x=>x.id===editingId);records[i]={...records[i],...data}}persist();$('#modal').classList.add('hidden');resetForm()};
+
+</script></body></html>
